@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courses</title>
+    
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .roadmap {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Box Styles */
+        .box {
+            flex: 1;
+            background-color: #f2f2f2;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            transition: box-shadow 0.3s ease; /* Transition for shadow effect */
+        }
+
+        .box:hover {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Shadow effect on hover */
+        }
+
+        .box button {
+            padding: 8px;
+            margin: 0 5px;
+            cursor: pointer;
+            border: none;
+            font-weight: bold;
+        }
+
+        /* Arrow Styles */
+        .arrow {
+            position: relative;
+            height: 50px; /* Uzunluk */
+            width: 2px; /* Kalınlık */
+            background-color: #000; /* Ok rengi */
+            margin: 0 10px;
+        }
+
+        .arrow::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 10px solid #000; /* Ok rengi */
+            transform: translateX(-50%);
+        }
+
+        /* Popup Styles */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #faedff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            z-index: 2;
+            width: 60%;
+            height: 60%;
+            max-width: 80vw;
+            max-height: 80vh;
+            overflow: auto;
+        }
+
+        .popup .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 3;
+        }
+
+        .popup-content {
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            overflow: auto;
+        }
+
+        #status-form {
+            margin-top: 20px;
+        }
+
+        #status-form label,
+        #status-form select,
+        #status-form button {
+            margin-bottom: 10px;
+        }
+        .note {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 250px; /* Not kutusunun genişliği */
+            background-color: #fff;
+            border: 1px solid #eff5a3;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            font-family: Arial, sans-serif;
+        }
+
+        .note-header {
+            background-color: #eff5a3; /* Başlık arka plan rengi */
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #ddd; /* Başlık alt çizgisi */
+            font-weight: bold;
+        }
+
+        .note-body {
+            padding: 10px;
+        }
+
+        .note p {
+            margin: 0;
+        }
+        .fas.fa-brain {
+            font-size: 50px; /* İkonun boyutu */
+            color: #000; /* İkon rengi */
+        }
+
+        /* Kutucuk için stillendirme */
+        .progress-indicator {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+        }
+
+        /* İlerleme yüzdesi için stillendirme */
+        #progressPercentage {
+            font-weight: bold;
+            color: #333;
+            margin-left: 10px; /* Metin ile ikon arasındaki boşluk */
+        }
+
+        /* FontAwesome ikonunun konumu */
+        .brain-icon {
+            margin-right: 10px; /* İkon ile metin arasındaki boşluk */
+        }
+    </style>
+</head>
+<body> onload="updateProgressBar({{ progress_percentage }})">
+    <!-- TITLE -->
+    <div style="text-align: center; padding: 20px; background-color: #f0f0f0;">
+        <h1>Welcome, {{ username }}!</h1>
+    </div>
+
+    <!-- Courses buttons -->
+    <div class="container">
+        <div class="box" onclick="openPopup('Python')">
+            <button>Python</button>
+        </div>
+        <div class="arrow"></div>
+        <div class="box" onclick="openPopup('SQL')">
+            <button>SQL</button>
+        </div>
+        <div class="arrow"></div>
+        <div class="box" onclick="openPopup('DWH')">
+            <button>DWH</button>
+        </div>
+    </div>
+
+    <!-- Popup -->
+    <div id="popup" class="popup">
+        <span class="close-btn" onclick="closePopup()">×</span>
+        <div class="popup-content">
+            <h2 id="popup-title" style="margin-top: 0;"></h2>
+            <form id="status-form">
+                <label for="category-select">Category:</label>
+                <select id="category-select">
+                    <option value="Core">Core</option>
+                    <option value="Extend">Extend</option>
+                    <option value="Funny">Funny</option>
+                </select>
+                <br>
+                <label for="status-select">Status:</label>
+                <select id="status-select">
+                    <option value="in-progress">In Progress</option>
+                    <option value="done">Done</option>
+                </select>
+                <br>
+                <button type="button" onclick="updateStatus()">Save</button>
+            </form>
+        </div>
+    </div>
+    <aside class="note" id="note">
+        <div class="note-header" onclick="toggleNote()">Notes</div>
+        <div class="note-body" id="noteBody" style="display: none;">
+            <p>This page is constantly updated!
+                New updates coming soon...
+            </p>
+            <!-- İşte buraya notlarınızı ekleyebilirsiniz -->
+        </div>
+    </aside>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <div class="progress-indicator" id="progressIndicator">
+            <i class="fas fa-brain brain-icon"></i>
+                <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+                Progress: <span id="progressPercentage">0%</span>
+            </div>
+        </div>
+        
+            
+
+    <script>
+        function openPopup(course) {
+            var popupId = 'popup';
+            document.getElementById('popup-title').innerText = course;
+            var categorySelect = document.getElementById('category-select');
+            var statusSelect = document.getElementById('status-select');
+
+            // Assuming you want to send the course to the server (Flask) for fetching the status and category
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/get_status', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var data = JSON.parse(xhr.responseText);
+                    // Set the initial state of the select boxes based on the fetched data
+                    categorySelect.value = data.category; // Set the category value
+                    statusSelect.value = data.status;
+
+                    document.getElementById(popupId).style.display = 'block';
+                }
+            };
+            xhr.send(JSON.stringify({ username: '{{ username }}', course: course }));
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        function updateStatus() {
+            var statusForm = document.getElementById('status-form');
+            var statusSelect = document.getElementById('status-select');
+            var categorySelect = document.getElementById('category-select'); // Added this line
+
+            // Assuming you want to send the status to the server (Flask) for processing
+            var status = statusSelect.value;
+            var category = categorySelect.value || 'Core'; // Updated this line
+
+            if (status !== null) {
+                // Perform an AJAX request to update the status
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/update_status', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4) {
+                        if (xhr.status == 200) {
+                            alert('Status updated successfully!');
+                            closePopup();
+                            updateProgressBar(); // İlerleme çubuğunu güncelle
+                        } else {
+                            alert('Error updating status. Please try again.');
+                        }
+                    }
+                };
+                var course = document.getElementById('popup-title').innerText;
+                xhr.send(JSON.stringify({ username: '{{ username }}', course: course, status: status, category: category })); // Updated this line
+            } else {
+                alert('Please select a status.');
+            }
+        }
+        function toggleNote() {
+        var noteBody = document.getElementById("noteBody");
+        if (noteBody.style.display === "none") {
+            noteBody.style.display = "block";
+        } else {
+            noteBody.style.display = "none";
+        }
+    }
+    
+
+        function updateProgressBar() {
+            // AJAX isteği ile ilerleme yüzdesini al
+            $.ajax({
+                url: '/get_progress_percentage',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ username: '{{ username }}' }),
+                success: function(response) {
+                    var progressBar = document.getElementById("progressBar");
+                    var progressPercentage = document.getElementById("progressPercentage");
+                    var percentage = response.progress_percentage;
+
+                    progressBar.style.width = percentage + '%';
+                    progressPercentage.innerText = percentage + '%';
+                }
+            });
+        }
+            
+            // Sayfa yüklendiğinde ilerleme çubuğunu güncelle
+            document.addEventListener("DOMContentLoaded", function() {
+                updateProgressBar();
+            });
+           
+    </script>
+    
+</body>
+</html>
