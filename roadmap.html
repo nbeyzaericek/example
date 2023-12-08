@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Roadmap</title>
+</head>
+<body>
+    <div class="roadmap">
+        <div class="box python">
+            <h3>Python</h3>
+            <p>Python dilini öğrenmek</p>
+            <div class="details">
+                <div class="detail-box" onclick="showPopup('Python Core Açıklama Metni')">
+                    <h4>Core</h4>
+                </div>
+                <div class="detail-box" onclick="showPopup('Python Extend Açıklama Metni')">
+                    <h4>Extend</h4>
+                </div>
+                <div class="detail-box" onclick="showPopup('Python Funny Açıklama Metni')">
+                    <h4>Funny</h4>
+                </div>
+            </div>
+        </div>
+        <div class="arrow"></div>
+        <div class="box sql">
+            <h3>SQL</h3>
+            <p>SQL veritabanları ve sorgularını öğrenmek</p>
+            <div class="details">
+                <div class="detail-box" onclick="showPopup('SQL Core Açıklama Metni')">
+                    <h4>Core</h4>
+                </div>
+                <div class="detail-box" onclick="showPopup('SQL Extend Açıklama Metni')">
+                    <h4>Extend</h4>
+                </div>
+                <div class="detail-box" onclick="showPopup('SQL Funny Açıklama Metni')">
+                    <h4>Funny</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <span class="close" onclick="hidePopup()">&times;</span>
+            <div id="popupDetails" class="editable" contenteditable="true"></div>
+            <div class="edit-buttons">
+                <button onclick="editContent()">Düzenle</button>
+                <button onclick="saveContent()">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPopup(content) {
+            var popupDetails = document.getElementById("popupDetails");
+            popupDetails.innerHTML = content;
+            document.getElementById("popup").style.display = "block";
+        }
+
+        function hidePopup() {
+            document.getElementById("popup").style.display = "none";
+        }
+
+        function editContent() {
+            document.getElementById("popupDetails").contentEditable = "true";
+        }
+
+        function saveContent() {
+            document.getElementById("popupDetails").contentEditable = "false";
+        }
+    </script>
+</body>
+</html>
+//
